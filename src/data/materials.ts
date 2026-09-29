@@ -1,0 +1,78 @@
+import { MaterialConfig, CaseMaterial } from '@/types/keyboard';
+
+export const MATERIAL_CONFIGS: Record<CaseMaterial, MaterialConfig> = {
+  aluminum: {
+    id: 'aluminum',
+    name: '铝合金',
+    color: '#6b7280',
+    roughness: 0.3,
+    metalness: 0.8,
+  },
+  plastic: {
+    id: 'plastic',
+    name: 'ABS塑料',
+    color: '#374151',
+    roughness: 0.6,
+    metalness: 0.0,
+  },
+  wood: {
+    id: 'wood',
+    name: '实木',
+    color: '#92400e',
+    roughness: 0.8,
+    metalness: 0.0,
+  },
+  carbon: {
+    id: 'carbon',
+    name: '碳纤维',
+    color: '#1f2937',
+    roughness: 0.4,
+    metalness: 0.2,
+  },
+};
+
+export const MATERIAL_LIST: CaseMaterial[] = [
+  'aluminum',
+  'plastic',
+  'wood',
+  'carbon',
+];
+
+export const PRESET_COLORS: string[] = [
+  '#f8fafc',
+  '#fef3c7',
+  '#fde68a',
+  '#fca5a5',
+  '#f87171',
+  '#ef4444',
+  '#fb923c',
+  '#f97316',
+  '#fbbf24',
+  '#f59e0b',
+  '#a3e635',
+  '#84cc16',
+  '#4ade80',
+  '#22c55e',
+  '#34d399',
+  '#10b981',
+  '#2dd4bf',
+  '#14b8a6',
+  '#38bdf8',
+  '#0ea5e9',
+  '#60a5fa',
+  '#3b82f6',
+  '#818cf8',
+  '#6366f1',
+  '#a78bfa',
+  '#8b5cf6',
+  '#c084fc',
+  '#a855f7',
+  '#f0abfc',
+  '#d946ef',
+  '#f472b6',
+  '#ec4899',
+  '#64748b',
+  '#334155',
+  '#1e293b',
+  '#0f172a',
+];
