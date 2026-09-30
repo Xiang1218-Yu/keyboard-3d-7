@@ -2,11 +2,13 @@ import { useState } from 'react';
 import { KeyboardScene } from '@/components/Keyboard3D/KeyboardScene';
 import { ControlPanel } from '@/components/ControlPanel/ControlPanel';
 import { useKeyboardPress } from '@/hooks/useKeyboardPress';
+import { useEditMode } from '@/store/useKeyboardStore';
 import { KeyZone } from '@/types/keyboard';
 
 export default function Home() {
   const [selectedZone, setSelectedZone] = useState<KeyZone | null>(null);
-  
+  const editMode = useEditMode();
+
   useKeyboardPress();
 
   return (
@@ -28,12 +30,18 @@ export default function Home() {
           </div>
           <KeyboardScene selectedZone={selectedZone} />
         </div>
-        
+
         <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20">
           <div className="px-6 py-3 bg-gray-900/60 backdrop-blur-xl rounded-full border border-gray-700/30">
             <p className="text-sm text-gray-300 flex items-center gap-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              按任意键体验3D键盘交互
+              <span
+                className={`inline-block w-2 h-2 rounded-full animate-pulse ${
+                  editMode ? 'bg-indigo-400' : 'bg-green-500'
+                }`}
+              />
+              {editMode
+                ? '编辑模式：拖动键帽调整布局，按住 Shift 对齐'
+                : '按任意键体验3D键盘交互'}
             </p>
           </div>
         </div>

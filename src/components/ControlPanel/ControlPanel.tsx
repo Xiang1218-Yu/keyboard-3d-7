@@ -1,11 +1,11 @@
 import { Keyboard, Info, Mouse, MousePointer2 } from 'lucide-react';
 import { useState } from 'react';
 import { LayoutSelector } from './LayoutSelector';
+import { LayoutEditor } from './LayoutEditor';
 import { MaterialSelector } from './MaterialSelector';
 import { ZoneColorPicker } from './ZoneColorPicker';
 import { KeyZone } from '@/types/keyboard';
-import { useLayout } from '@/store/useKeyboardStore';
-import { LAYOUT_CONFIGS } from '@/data/layouts';
+import { useActiveLayout } from '@/hooks/useActiveLayout';
 
 interface ControlPanelProps {
   selectedZone: KeyZone | null;
@@ -14,8 +14,7 @@ interface ControlPanelProps {
 
 export function ControlPanel({ selectedZone, onZoneChange }: ControlPanelProps) {
   const [showTips, setShowTips] = useState(true);
-  const layout = useLayout();
-  const layoutConfig = LAYOUT_CONFIGS[layout];
+  const activeLayout = useActiveLayout();
 
   return (
     <div className="h-full flex flex-col bg-gray-900/80 backdrop-blur-xl border-l border-gray-800/50">
@@ -32,14 +31,16 @@ export function ControlPanel({ selectedZone, onZoneChange }: ControlPanelProps) 
         <div className="flex items-center gap-2 px-3 py-2 bg-gray-800/40 rounded-lg">
           <Info className="w-4 h-4 text-indigo-400 flex-shrink-0" />
           <span className="text-xs text-gray-300">
-            当前布局: <span className="text-indigo-300 font-medium">{layoutConfig.name}</span>
-            <span className="text-gray-500 ml-1">({layoutConfig.keys.length} 键)</span>
+            当前布局: <span className="text-indigo-300 font-medium">{activeLayout.name}</span>
+            <span className="text-gray-500 ml-1">({activeLayout.keys.length} 键)</span>
           </span>
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         <LayoutSelector />
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
+        <LayoutEditor />
         <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
         <MaterialSelector />
         <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
