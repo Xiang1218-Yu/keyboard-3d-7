@@ -20,7 +20,7 @@ export interface KeyConfig {
   row: number;
   col: number;
   zone: KeyZone;
-  keyCode?: string;
+  keyCode?: string | null;
 }
 
 export interface LayoutConfig {
@@ -30,6 +30,31 @@ export interface LayoutConfig {
   keys: KeyConfig[];
   width: number;
   height: number;
+}
+
+/**
+ * 用户保存的自定义布局。
+ * 持久化时必须保留 id、keyCode、label、zone 四个字段，
+ * 以便恢复出与内置布局一致的键位数据。
+ */
+export interface CustomLayout {
+  id: string;
+  name: string;
+  /** 该布局基于哪套内置布局 */
+  baseType: LayoutType;
+  keys: KeyConfig[];
+  width: number;
+  height: number;
+  createdAt: number;
+  updatedAt: number;
+}
+
+/** 拖动时 Shift 对齐产生的参考线（棋盘局部坐标） */
+export interface AlignmentGuide {
+  axis: 'x' | 'z';
+  value: number;
+  from: number;
+  to: number;
 }
 
 export interface MaterialConfig {

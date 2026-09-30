@@ -2,19 +2,21 @@ import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import { RoundedBox } from '@react-three/drei';
 import * as THREE from 'three';
-import { useCaseMaterial, useLayout } from '@/store/useKeyboardStore';
+import { useCaseMaterial } from '@/store/useKeyboardStore';
 import { MATERIAL_CONFIGS } from '@/data/materials';
-import { LAYOUT_CONFIGS } from '@/data/layouts';
 
-export function KeyboardCase() {
+interface KeyboardCaseProps {
+  width: number;
+  height: number;
+}
+
+export function KeyboardCase({ width, height }: KeyboardCaseProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const materialId = useCaseMaterial();
-  const layout = useLayout();
   const materialConfig = MATERIAL_CONFIGS[materialId];
-  const layoutConfig = LAYOUT_CONFIGS[layout];
 
-  const caseWidth = useMemo(() => layoutConfig.width + 0.8, [layoutConfig.width]);
-  const caseDepth = useMemo(() => layoutConfig.height + 0.8, [layoutConfig.height]);
+  const caseWidth = useMemo(() => width + 0.8, [width]);
+  const caseDepth = useMemo(() => height + 0.8, [height]);
 
   useFrame((state) => {
     if (meshRef.current) {

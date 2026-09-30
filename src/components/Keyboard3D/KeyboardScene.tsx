@@ -1,12 +1,12 @@
 import { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
-import { OrbitControls, Environment } from '@react-three/drei';
+import { Canvas, useFrame, ThreeEvent } from '@react-three/fiber';
+import { OrbitControls } from '@react-three/drei';
 import { EffectComposer, Bloom } from '@react-three/postprocessing';
 import { Lights } from './Lights';
 import { KeyboardCase } from './KeyboardCase';
 import { KeyCap } from './KeyCap';
-import { useLayout } from '@/store/useKeyboardStore';
-import { LAYOUT_CONFIGS } from '@/data/layouts';
+import { AlignmentGuides } from './AlignmentGuides';
+import { useEffectiveLayout, useLayoutEditorStore } from '@/store/useLayoutEditorStore';
 import { KeyZone } from '@/types/keyboard';
 import * as THREE from 'three';
 
@@ -15,9 +15,11 @@ interface KeyboardContentProps {
 }
 
 function KeyboardContent({ selectedZone }: KeyboardContentProps) {
-  const layout = useLayout();
-  const layoutConfig = LAYOUT_CONFIGS[layout];
+  const layoutConfig = useEffectiveLayout();
   const groupRef = useRef<THREE.Group>(null);
+  const editMode = useLayoutEditorStore((s) => s.editing);
+  const selectedKeyId = useLayoutEditorStore((s) => s.selectedKeyId);
+  const selectKey = useLayoutEditorStore((s) => s.selectKey);
 
   useFrame((state) => {
     if (groupRef.current) {
@@ -31,15 +33,30 @@ function KeyboardContent({ selectedZone }: KeyboardContentProps) {
         key={keyConfig.id}
         keyConfig={keyConfig}
         selectedZone={selectedZone}
+        editMode={editMode}
+        selected={selectedKeyId === keyConfig.id}
+        onSelect={selectKey}
       />
     ));
-  }, [layoutConfig.keys, selectedZone]);
+  }, [layoutConfig.keys, selectedZone, editMode, selectedKeyId, selectKey]);
+
+  const handleBackgroundClick = (e: ThreeEvent<MouseEvent>) => {
+    // 点击空白处取消选中（编辑模式下）
+    if (editMode) {
+      e.stopPropagation();
+      selectKey(null);
+    }
+  };
 
   return (
     <group ref={groupRef}>
-      <KeyboardCase />
-      <group position={[-layoutConfig.width / 2, 0.35, -layoutConfig.height / 2]}>
+      <KeyboardCase width={layoutConfig.width} height={layoutConfig.height} />
+      <group
+        position={[-layoutConfig.width / 2, 0.35, -layoutConfig.height / 2]}
+        onPointerDown={handleBackgroundClick}
+      >
         {keys}
+        <AlignmentGuides />
       </group>
     </group>
   );
@@ -50,6 +67,8 @@ interface KeyboardSceneProps {
 }
 
 export function KeyboardScene({ selectedZone }: KeyboardSceneProps) {
+  const interacting = useLayoutEditorStore((s) => s.interacting);
+
   return (
     <Canvas
       shadows
@@ -59,10 +78,10 @@ export function KeyboardScene({ selectedZone }: KeyboardSceneProps) {
     >
       <color attach="background" args={['#0a0a0f']} />
       <fog attach="fog" args={['#0a0a0f', 15, 35]} />
-      
+
       <Lights />
       <KeyboardContent selectedZone={selectedZone} />
-      
+
       <OrbitControls
         enableDamping
         dampingFactor={0.05}
@@ -72,8 +91,10 @@ export function KeyboardScene({ selectedZone }: KeyboardSceneProps) {
         minPolarAngle={Math.PI / 8}
         enablePan={true}
         target={[0, 0, 0]}
+        // 编辑模式下拖动/缩放键帽时禁用轨道控制，避免误触旋转视角
+        enabled={!interacting}
       />
-      
+
       <EffectComposer>
         <Bloom
           luminanceThreshold={0.2}

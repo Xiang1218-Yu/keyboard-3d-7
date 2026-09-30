@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { LayoutSelector } from './LayoutSelector';
 import { MaterialSelector } from './MaterialSelector';
 import { ZoneColorPicker } from './ZoneColorPicker';
+import { LayoutEditorPanel } from './LayoutEditorPanel';
 import { KeyZone } from '@/types/keyboard';
 import { useLayout } from '@/store/useKeyboardStore';
 import { LAYOUT_CONFIGS } from '@/data/layouts';
@@ -40,6 +41,8 @@ export function ControlPanel({ selectedZone, onZoneChange }: ControlPanelProps) 
 
       <div className="flex-1 overflow-y-auto p-6 space-y-6">
         <LayoutSelector />
+        <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
+        <LayoutEditorPanel />
         <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />
         <MaterialSelector />
         <div className="w-full h-px bg-gradient-to-r from-transparent via-gray-700/50 to-transparent" />

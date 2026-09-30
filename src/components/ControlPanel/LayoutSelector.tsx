@@ -2,12 +2,14 @@ import { Layout, ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 import { useLayout } from '@/store/useKeyboardStore';
 import { useKeyboardStore } from '@/store/useKeyboardStore';
+import { useLayoutEditorStore } from '@/store/useLayoutEditorStore';
 import { LAYOUT_LIST, LAYOUT_CONFIGS } from '@/data/layouts';
 import { LayoutType } from '@/types/keyboard';
 
 export function LayoutSelector() {
   const currentLayout = useLayout();
   const setLayout = useKeyboardStore((state) => state.setLayout);
+  const editing = useLayoutEditorStore((s) => s.editing);
   const [isOpen, setIsOpen] = useState(false);
   const currentConfig = LAYOUT_CONFIGS[currentLayout];
 
@@ -17,10 +19,15 @@ export function LayoutSelector() {
         <Layout className="w-4 h-4 text-indigo-400" />
         <h3 className="text-sm font-medium text-gray-200">键位布局</h3>
       </div>
-      
+
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-gray-800/60 hover:bg-gray-700/60 border border-gray-700/50 rounded-xl transition-all duration-200 group"
+        onClick={() => !editing && setIsOpen(!isOpen)}
+        disabled={editing}
+        className={`w-full flex items-center justify-between px-4 py-3 border rounded-xl transition-all duration-200 group ${
+          editing
+            ? 'bg-gray-800/30 border-gray-700/30 opacity-50 cursor-not-allowed'
+            : 'bg-gray-800/60 hover:bg-gray-700/60 border-gray-700/50'
+        }`}
       >
         <div className="text-left">
           <div className="text-white font-medium">{currentConfig.name}</div>
@@ -31,7 +38,11 @@ export function LayoutSelector() {
         />
       </button>
 
-      {isOpen && (
+      {editing && (
+        <p className="mt-1.5 text-[11px] text-amber-400/80">编辑模式中无法切换基础布局</p>
+      )}
+
+      {isOpen && !editing && (
         <div className="absolute z-20 w-full mt-2 py-2 bg-gray-800/95 backdrop-blur-xl border border-gray-700/50 rounded-xl shadow-2xl">
           {LAYOUT_LIST.map((layout) => {
             const config = LAYOUT_CONFIGS[layout];
